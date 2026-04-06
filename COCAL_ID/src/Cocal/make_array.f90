@@ -1,14 +1,15 @@
 ! ----------------------------------------------------------------------
 !  Allocate array
 ! ----------------------------------------------------------------------
-module make_array
-  use phys_constant, only : long
-  implicit none
+module COCAL_ID_make_array
+use COCAL_ID_phys_constant, only : long
+implicit none
 contains
 ! - - - - -
 ! 1D array
 subroutine make_array1(array,n1,stn1)
-  implicit none
+
+implicit none
   integer,Intent(IN)  :: n1
   integer,optional    :: stn1
   integer             :: status
@@ -22,7 +23,8 @@ end subroutine make_array1
 ! - - - - -
 ! 2D array
 subroutine make_array2(array,n1,n2)
-  implicit none
+
+implicit none
   integer,Intent(IN)  :: n1, n2
   integer             :: status
   Real(long), Pointer :: array(:,:)
@@ -31,10 +33,11 @@ end subroutine make_array2
 ! - - - - -
 ! 3D array
 subroutine make_array3(array,n1,n2,n3)
-  implicit none
+
+implicit none
   integer,Intent(IN)   :: n1, n2, n3
   integer              :: status
   Real(long), Pointer  :: array(:,:,:)
   Allocate(array(0:n1,0:n2,0:n3),stat=status)
 end subroutine make_array3
-end module make_array
+end module COCAL_ID_make_array

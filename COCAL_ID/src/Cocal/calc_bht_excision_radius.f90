@@ -1,8 +1,9 @@
-subroutine calc_bht_excision_radius
-  use phys_constant, only : long, pi
-  use grid_parameter, only : rgin
-  use def_bh_parameter, only : mass_bh, spin_bh
-  implicit none
+subroutine COCAL_ID_calc_bht_excision_radius
+
+use COCAL_ID_phys_constant, only : long, pi
+use COCAL_ID_grid_parameter, only : rgin
+use COCAL_ID_def_bh_parameter, only : mass_bh, spin_bh
+implicit none
   real(long) :: drh, rh, aom
 
   rh = mass_bh + dsqrt(mass_bh*mass_bh-spin_bh*spin_bh)
@@ -19,4 +20,4 @@ subroutine calc_bht_excision_radius
 !  write(120,'(a16,1p,3e23.15)') "rgin           =", rgin 
 !  close(120)
 !
-end subroutine calc_bht_excision_radius
+end subroutine COCAL_ID_calc_bht_excision_radius

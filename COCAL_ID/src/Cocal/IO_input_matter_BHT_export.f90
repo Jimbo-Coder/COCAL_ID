@@ -1,6 +1,7 @@
-subroutine IO_input_matter_BHT_export(filenm,coc2cac_readformat, emdg, omeg, ome, ber, radi)
-  use phys_constant, only : long
-  implicit none
+subroutine COCAL_ID_IO_input_matter_BHT_export(filenm,coc2cac_readformat, emdg, omeg, ome, ber, radi)
+
+use COCAL_ID_phys_constant, only : long
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: emdg(:,:,:), omeg(:,:,:)
   real(8) :: ome, ber, radi, emdc
@@ -33,4 +34,4 @@ subroutine IO_input_matter_BHT_export(filenm,coc2cac_readformat, emdg, omeg, ome
   end if   
   close(12)
 !
-end subroutine IO_input_matter_BHT_export
+end subroutine COCAL_ID_IO_input_matter_BHT_export

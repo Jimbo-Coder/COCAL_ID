@@ -1,14 +1,16 @@
 ! extended coordinate for the field
 !______________________________________________
-subroutine copy_coordinate_grav_extended_to_mpt(impt)
-  use phys_constant, only : long, nnrg, nntg, nnpg
-!  use grid_parameter, only : nrg, ntg, npg
-  use coordinate_grav_extended
-  use coordinate_grav_extended_mpt
-  use copy_array_static_1dto2d_mpt
-  use copy_int_array_static_1dto2d_mpt
-  use copy_int_array_static_2dto3d_mpt
-  implicit none
+subroutine COCAL_ID_copy_coordinate_grav_extended_to_mpt(impt)
+
+use COCAL_ID_phys_constant, only : long, nnrg, nntg, nnpg!
+!  use COCAL_ID_grid_parameter, only : nrg, ntg, npg
+
+use COCAL_ID_coordinate_grav_extended
+use COCAL_ID_coordinate_grav_extended_mpt
+use COCAL_ID_copy_array_static_1dto2d_mpt
+use COCAL_ID_copy_int_array_static_1dto2d_mpt
+use COCAL_ID_copy_int_array_static_2dto3d_mpt
+implicit none
   integer :: impt
 !
   call copy_arraystatic_1dto2d_mpt(impt,rgex,rgex_,-2,nnrg+2)
@@ -31,4 +33,4 @@ subroutine copy_coordinate_grav_extended_to_mpt(impt)
   call copy_int_arraystatic_2dto3d_mpt(impt,ipgex_hth,ipgex_hth_,1,nnpg,-2,nntg+2)
   call copy_int_arraystatic_1dto2d_mpt(impt,ipgex_hphi,ipgex_hphi_,-2,nnpg+2)
 !
-end subroutine copy_coordinate_grav_extended_to_mpt
+end subroutine COCAL_ID_copy_coordinate_grav_extended_to_mpt

@@ -1,8 +1,8 @@
 ! extended coordinate for the field
 !______________________________________________
-module coordinate_grav_extended_mpt
-  use phys_constant, only : nnrg, nntg, nnpg, long, nnmpt
-  implicit none
+module COCAL_ID_coordinate_grav_extended_mpt
+use COCAL_ID_phys_constant, only : nnrg, nntg, nnpg, long, nnmpt
+implicit none
   real(long) ::   rgex_(-2:nnrg+2,nnmpt), &
   &              thgex_(-2:nntg+2,nnmpt), &
   &             phigex_(-2:nnpg+2,nnmpt)
@@ -22,4 +22,4 @@ module coordinate_grav_extended_mpt
   integer :: itgex_hth_(-2:nntg+2,nnmpt), &
   &          ipgex_hth_(1:nnpg,-2:nntg+2,nnmpt)
   integer :: ipgex_hphi_(-2:nnpg+2,nnmpt)
-end module coordinate_grav_extended_mpt
+end module COCAL_ID_coordinate_grav_extended_mpt

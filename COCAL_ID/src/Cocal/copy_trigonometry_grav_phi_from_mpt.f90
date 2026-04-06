@@ -1,13 +1,14 @@
 !  trigonometric functions in phi coordinate
 !______________________________________________
-subroutine copy_trigonometry_grav_phi_from_mpt(impt)
-  use phys_constant, only : nnpg
-  use grid_parameter, only : npg, nlg
-  use trigonometry_grav_phi
-  use trigonometry_grav_phi_mpt
-  use copy_array_static_2dto1d_mpt
-  use copy_array_3dto2d_mpt
-  implicit none
+subroutine COCAL_ID_copy_trigonometry_grav_phi_from_mpt(impt)
+
+use COCAL_ID_phys_constant, only : nnpg
+use COCAL_ID_grid_parameter, only : npg, nlg
+use COCAL_ID_trigonometry_grav_phi
+use COCAL_ID_trigonometry_grav_phi_mpt
+use COCAL_ID_copy_array_static_2dto1d_mpt
+use COCAL_ID_copy_array_3dto2d_mpt
+implicit none
   integer :: impt
 !
   call copy_arraystatic_2dto1d_mpt(impt, sinphig_, sinphig, 0, nnpg)
@@ -19,4 +20,4 @@ subroutine copy_trigonometry_grav_phi_from_mpt(impt)
   call copy_array3dto2d_mpt(impt, hsinmpg_, hsinmpg, 0, nlg, 1, npg)
   call copy_array3dto2d_mpt(impt, hcosmpg_, hcosmpg, 0, nlg, 1, npg)
 !
-end subroutine copy_trigonometry_grav_phi_from_mpt
+end subroutine COCAL_ID_copy_trigonometry_grav_phi_from_mpt

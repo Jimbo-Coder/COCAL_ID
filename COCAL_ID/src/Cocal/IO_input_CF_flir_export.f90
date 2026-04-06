@@ -1,6 +1,7 @@
-subroutine IO_input_CF_flir_export(filenm,coc2cac_readformat,emd,vep,ome,ber,radi)
-  use phys_constant, only : long, nnrg, nntg, nnpg
-  implicit none
+subroutine COCAL_ID_IO_input_CF_flir_export(filenm,coc2cac_readformat,emd,vep,ome,ber,radi)
+
+use COCAL_ID_phys_constant, only : long, nnrg, nntg, nnpg
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: emd(:,:,:), vep(:,:,:), rs(:,:)
   real(8) :: ome, ber, radi
@@ -30,4 +31,4 @@ subroutine IO_input_CF_flir_export(filenm,coc2cac_readformat,emd,vep,ome,ber,rad
   end if
   close(12)
 !
-end subroutine IO_input_CF_flir_export
+end subroutine COCAL_ID_IO_input_CF_flir_export

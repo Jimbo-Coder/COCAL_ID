@@ -69,6 +69,21 @@ CCTK_KEYWORD COCAL_ID_readformat "Format of the input data"
   "23.15" :: "23.15"
 } "20.12"
 
+CCTK_REAL COCAL_ID_cen_x "X Position of COCAL origin in Cactus coordinates"
+{
+  *:* :: ""
+} 0.0
+
+CCTK_REAL COCAL_ID_cen_y "Y Position of COCAL origin in Cactus coordinates"
+{
+  *:* :: ""
+} 0.0
+
+CCTK_REAL COCAL_ID_cen_z "Z Position of COCAL origin in Cactus coordinates"
+{
+  *:* :: ""
+} 0.0
+
 CCTK_BOOLEAN COCAL_ID_readpot "Whether to read the Potential or faraday tensor, True for Potential, False for Fields."
 {
 } "False"

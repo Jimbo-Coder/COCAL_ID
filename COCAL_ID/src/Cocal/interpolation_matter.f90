@@ -1,9 +1,12 @@
-subroutine interpolation_matter(fnc,fncca)
-  use phys_constant, only : long
-  use grid_parameter_cartesian, only : nx, ny, nz
-  use coordinate_grav_xyz, only : x, y, z
-  use interface_modules_cartesian, ignore_me => interpolation_matter
-  implicit none
+subroutine COCAL_ID_interpolation_matter(fnc,fncca)
+
+use COCAL_ID_phys_constant, only : long
+use grid_parameter_cartesian, only : nx, ny, nz
+
+use coordinate_grav_xyz, only : x, y, z
+
+use COCAL_ID_interface_modules_cartesian, ignore_me => COCAL_ID_interpolation_matter
+implicit none
   real(long), pointer :: fnc(:,:,:)
   real(long), pointer :: fncca(:,:,:)
   real(long) :: xc, yc, zc, cfn
@@ -15,9 +18,9 @@ subroutine interpolation_matter(fnc,fncca)
       yc = y(iy)
       do ix = 1, nx
         xc = x(ix)
-        call interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
+        call COCAL_ID_interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
         fncca(ix,iy,iz) = cfn
       end do
     end do
   end do
-end subroutine interpolation_matter
+end subroutine COCAL_ID_interpolation_matter

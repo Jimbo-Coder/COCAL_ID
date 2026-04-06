@@ -1,11 +1,12 @@
 !  trigonometric functions in theta coordinate
 !______________________________________________
-subroutine copy_trigonometry_grav_theta_from_mpt(impt)
-  use phys_constant, only : nntg
-  use trigonometry_grav_theta
-  use trigonometry_grav_theta_mpt
-  use copy_array_static_2dto1d_mpt
-  implicit none
+subroutine COCAL_ID_copy_trigonometry_grav_theta_from_mpt(impt)
+
+use COCAL_ID_phys_constant, only : nntg
+use COCAL_ID_trigonometry_grav_theta
+use COCAL_ID_trigonometry_grav_theta_mpt
+use COCAL_ID_copy_array_static_2dto1d_mpt
+implicit none
   integer :: impt
 !
   call copy_arraystatic_2dto1d_mpt(impt, sinthg_, sinthg, 0, nntg)
@@ -17,4 +18,4 @@ subroutine copy_trigonometry_grav_theta_from_mpt(impt)
   call copy_arraystatic_2dto1d_mpt(impt, hcosecthg_, hcosecthg, 1, nntg)
   call copy_arraystatic_2dto1d_mpt(impt, hcotanthg_, hcotanthg, 1, nntg)
 !
-end subroutine copy_trigonometry_grav_theta_from_mpt
+end subroutine COCAL_ID_copy_trigonometry_grav_theta_from_mpt

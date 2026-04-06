@@ -1,12 +1,13 @@
 !  phi_coordinate
 !______________________________________________
-subroutine copy_coordinate_grav_phi_from_mpt(impt)
-  use phys_constant, only : nnpg
-  use coordinate_grav_phi
-  use coordinate_grav_phi_mpt
-  use copy_array_static_1dto0d_mpt
-  use copy_array_static_2dto1d_mpt
-  implicit none
+subroutine COCAL_ID_copy_coordinate_grav_phi_from_mpt(impt)
+
+use COCAL_ID_phys_constant, only : nnpg
+use COCAL_ID_coordinate_grav_phi
+use COCAL_ID_coordinate_grav_phi_mpt
+use COCAL_ID_copy_array_static_1dto0d_mpt
+use COCAL_ID_copy_array_static_2dto1d_mpt
+implicit none
   integer :: impt
 !
   call copy_arraystatic_1dto0d_mpt(impt, dphig_, dphig)
@@ -15,4 +16,4 @@ subroutine copy_coordinate_grav_phi_from_mpt(impt)
   call copy_arraystatic_2dto1d_mpt(impt, hphig_, hphig, 1, nnpg)
 !
 ! Subroutine
-end subroutine copy_coordinate_grav_phi_from_mpt
+end subroutine COCAL_ID_copy_coordinate_grav_phi_from_mpt

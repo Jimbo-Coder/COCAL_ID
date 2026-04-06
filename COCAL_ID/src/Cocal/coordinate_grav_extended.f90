@@ -1,12 +1,12 @@
 ! extended coordinate for the field
 !______________________________________________
-module coordinate_grav_extended
-  use phys_constant, only : nnrg, nntg, nnpg, long
-  use coordinate_grav_r, only : rg, hrg
-  use coordinate_grav_theta, only : thg, hthg
-  use coordinate_grav_phi, only : phig, hphig
-  use grid_parameter, only : nrg, ntg, npg
-  implicit none
+module COCAL_ID_coordinate_grav_extended
+use COCAL_ID_phys_constant, only : nnrg, nntg, nnpg, long
+use COCAL_ID_coordinate_grav_r, only : rg, hrg
+use COCAL_ID_coordinate_grav_theta, only : thg, hthg
+use COCAL_ID_coordinate_grav_phi, only : phig, hphig
+use COCAL_ID_grid_parameter, only : nrg, ntg, npg
+implicit none
   real(long) :: rgex(-2:nnrg+2), &
   &             thgex(-2:nntg+2), & 
   &             phigex(-2:nnpg+2)
@@ -29,7 +29,8 @@ module coordinate_grav_extended
 !
 contains
 subroutine grid_extended
-  implicit none
+
+implicit none
   integer  :: irg, itg, ipg
   rgex(0:nrg) = rg(0:nrg)
   thgex(0:ntg) = thg(0:ntg)
@@ -138,4 +139,4 @@ subroutine grid_extended
   end do
 !
 end subroutine grid_extended
-end module coordinate_grav_extended
+end module COCAL_ID_coordinate_grav_extended

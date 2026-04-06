@@ -1,12 +1,14 @@
-subroutine interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
-  use phys_constant, only : long, pi
-  use grid_parameter, only : nrf, ntg, npg
-  use coordinate_grav_extended
-  use def_matter, only : rs
-  use coordinate_grav_r, only : rg
-  use interface_modules_cartesian, ignore_me => interpo_fl2cgr_4th
-  use interface_interpo_lag4th_2Dsurf
-  implicit none
+subroutine COCAL_ID_interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
+
+use COCAL_ID_phys_constant, only : long, pi
+use COCAL_ID_grid_parameter, only : nrf, ntg, npg
+use COCAL_ID_coordinate_grav_extended
+use def_matter, only : rs
+
+use COCAL_ID_coordinate_grav_r, only : rg
+use COCAL_ID_interface_modules_cartesian, ignore_me => COCAL_ID_interpo_fl2cgr_4th
+use COCAL_ID_interface_interpo_lag4th_2Dsurf
+implicit none
   real(long), pointer     :: fnc(:,:,:)
   real(long), intent(out) :: cfn
   real(long) ::  rsca, rc_gr
@@ -14,7 +16,7 @@ subroutine interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
   real(long) ::  r4(4), th4(4), phi4(4), fr4(4), ft4(4), fp4(4)
   integer :: irg, itg, ipg, irgex, itgex, ipgex
   integer :: ir0, it0, ip0, irg0 , itg0 , ipg0, ii, jj, kk
-  real(long), external :: lagint_4th
+  real(long), external :: COCAL_ID_lagint_4th
 !
 ! --- Interpolation from the central spherical grid 
 ! --- to a Cartesian grid point using 4th order Lagrange formula.
@@ -26,7 +28,7 @@ subroutine interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
   thc  = dmod(2.0d0*pi + datan2(varpic,zc),2.0d0*pi)
   phic = dmod(2.0d0*pi + datan2(    yc,xc),2.0d0*pi)
 !
-  call interpo_lag4th_2Dsurf(rsca,rs,thc,phic)
+  call COCAL_ID_interpo_lag4th_2Dsurf(rsca,rs,thc,phic)
   rc = rc_gr/rsca
 !  if (rc.gt.1.0d0) return
   if (rc.gt.rg(nrf)) return
@@ -69,10 +71,10 @@ subroutine interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
         ipgex = ipgex_r(ipgex_th(ipgex_phi(ipg0),itg0),irg0)
         fr4(ii) = fnc(irgex,itgex,ipgex)
       end do
-      ft4(jj) = lagint_4th(r4,fr4,rc)
+      ft4(jj) = COCAL_ID_lagint_4th(r4,fr4,rc)
     end do
-    fp4(kk) = lagint_4th(th4,ft4,thc)
+    fp4(kk) = COCAL_ID_lagint_4th(th4,ft4,thc)
   end do
-  cfn = lagint_4th(phi4,fp4,phic)
+  cfn = COCAL_ID_lagint_4th(phi4,fp4,phic)
 !
-end subroutine interpo_fl2cgr_4th
+end subroutine COCAL_ID_interpo_fl2cgr_4th

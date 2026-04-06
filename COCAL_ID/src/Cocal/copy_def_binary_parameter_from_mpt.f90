@@ -1,8 +1,9 @@
-subroutine copy_def_binary_parameter_from_mpt(impt)
-  use def_binary_parameter
-  use def_binary_parameter_mpt
-  use copy_array_static_1dto0d_mpt
-  implicit none
+subroutine COCAL_ID_copy_def_binary_parameter_from_mpt(impt)
+
+use COCAL_ID_def_binary_parameter
+use COCAL_ID_def_binary_parameter_mpt
+use COCAL_ID_copy_array_static_1dto0d_mpt
+implicit none
   integer :: impt
 !
   call copy_arraystatic_1dto0d_mpt(impt, sepa_, sepa)
@@ -15,4 +16,4 @@ subroutine copy_def_binary_parameter_from_mpt(impt)
   call copy_arraystatic_1dto0d_mpt(impt, dis_grav_y_,  dis_grav_y)
   call copy_arraystatic_1dto0d_mpt(impt, dis_grav_z_,  dis_grav_z)
 !
-end subroutine copy_def_binary_parameter_from_mpt
+end subroutine COCAL_ID_copy_def_binary_parameter_from_mpt

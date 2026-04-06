@@ -1,6 +1,7 @@
-subroutine IO_input_CF_flsp_export(filenm,coc2cac_readformat,emd,vep,wxspf,wyspf,wzspf,ome,ber,radi,confpow)
-  use phys_constant, only : long, nnrg, nntg, nnpg
-  implicit none
+subroutine COCAL_ID_IO_input_CF_flsp_export(filenm,coc2cac_readformat,emd,vep,wxspf,wyspf,wzspf,ome,ber,radi,confpow)
+
+use COCAL_ID_phys_constant, only : long, nnrg, nntg, nnpg
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: emd(:,:,:), vep(:,:,:), wxspf(:,:,:), wyspf(:,:,:), wzspf(:,:,:)
   real(8) :: ome, ber, radi, confpow, omespx, omespy, omespz
@@ -34,4 +35,4 @@ subroutine IO_input_CF_flsp_export(filenm,coc2cac_readformat,emd,vep,wxspf,wyspf
   end if
   close(12)
 !
-end subroutine IO_input_CF_flsp_export
+end subroutine COCAL_ID_IO_input_CF_flsp_export
