@@ -135,12 +135,76 @@
 #include "cctk_Parameters.h"
 
 
-!RNS Routine
-subroutine COCAL_ID_rns(CCTK_ARGUMENTS)
+module COCAL_ID_data_rns
+  implicit none
 
-use COCAL_ID_phys_constant
+  real(8), save :: ome, ber, radi
+  real(8), save :: rexc
+
+  real(8), pointer, save :: utf(:,:,:) => NULL(), uxf(:,:,:) => NULL(), uyf(:,:,:) => NULL(), uzf(:,:,:) => NULL()
+  real(8), pointer, save :: emd(:,:,:) => NULL(), omef(:,:,:) => NULL(), rs(:,:) => NULL()
+  real(8), pointer, save :: psif(:,:,:) => NULL(), alphf(:,:,:) => NULL(), bvxuf(:,:,:) => NULL(), bvyuf(:,:,:) => NULL(), bvzuf(:,:,:) => NULL()
+  real(8), pointer, save :: psi(:,:,:) => NULL(), alph(:,:,:) => NULL()
+  real(8), pointer, save :: bvxd(:,:,:) => NULL(), bvyd(:,:,:) => NULL(), bvzd(:,:,:) => NULL(), bvxu(:,:,:) => NULL(), bvyu(:,:,:) => NULL(), bvzu(:,:,:) => NULL()
+  real(8), pointer, save :: hxxd(:,:,:) => NULL(), hxyd(:,:,:) => NULL(), hxzd(:,:,:) => NULL(), hyyd(:,:,:) => NULL(), hyzd(:,:,:) => NULL(), hzzd(:,:,:) => NULL()
+  real(8), pointer, save :: hxxu(:,:,:) => NULL(), hxyu(:,:,:) => NULL(), hxzu(:,:,:) => NULL(), hyyu(:,:,:) => NULL(), hyzu(:,:,:) => NULL(), hzzu(:,:,:) => NULL()
+  real(8), pointer, save :: kxxa(:,:,:) => NULL(), kxya(:,:,:) => NULL(), kxza(:,:,:) => NULL(), kyya(:,:,:) => NULL(), kyza(:,:,:) => NULL(), kzza(:,:,:) => NULL()
+  real(8), pointer, save :: va(:,:,:) => NULL(), vaxd(:,:,:) => NULL(), vayd(:,:,:) => NULL(), vazd(:,:,:) => NULL()
+  real(8), pointer, save :: fxd(:,:,:) => NULL(), fyd(:,:,:) => NULL(), fzd(:,:,:) => NULL(), fxyd(:,:,:) => NULL(), fxzd(:,:,:) => NULL(), fyzd(:,:,:) => NULL()
+
+  logical, save :: have_read_data = .false.
+end module COCAL_ID_data_rns
+
+module COCAL_ID_data_bns
+  implicit none
+
+  character*400, save :: COCAL_ID_PathToIDf, COCAL_ID_readformatf
+  integer, save :: COCAL_ID_PathToIDf_len, COCAL_ID_bnstypelen, COCAL_ID_readformatlen
+  character(2), save :: id_type
+  integer, save :: ierr = 0
+  real(8), save :: rr3, dis_cm
+  real(8), save :: ome_p1, ber_p1, radi_p1, r_surf_p1
+  real(8), save :: ome_p2, ber_p2, radi_p2, r_surf_p2
+  real(8), save :: confpow_p1, confpow_p2
+  integer, save :: nrg_p1, ntg_p1, npg_p1, nrf_p1, ntf_p1, npf_p1
+  integer, save :: nrg_p2, ntg_p2, npg_p2, nrf_p2, ntf_p2, npf_p2
+  integer, save :: nrg_p3, ntg_p3, npg_p3, nrf_p3, ntf_p3, npf_p3
+
+  real(8), pointer, save :: rg_p1(:) => NULL(), rgex_p1(:) => NULL(), thgex_p1(:) => NULL(), phigex_p1(:) => NULL()
+  integer, pointer, save :: irgex_r_p1(:) => NULL(), itgex_th_p1(:) => NULL(), ipgex_phi_p1(:) => NULL()
+  integer, pointer, save :: itgex_r_p1(:,:) => NULL(), ipgex_r_p1(:,:) => NULL(), ipgex_th_p1(:,:) => NULL()
+  real(8), pointer, save :: emd_p1(:,:,:) => NULL(), rs_p1(:,:) => NULL()
+  real(8), pointer, save :: psif_p1(:,:,:) => NULL(), alphf_p1(:,:,:) => NULL(), bvxdf_p1(:,:,:) => NULL(), bvydf_p1(:,:,:) => NULL(), bvzdf_p1(:,:,:) => NULL()
+  real(8), pointer, save :: psi_p1(:,:,:) => NULL(), alph_p1(:,:,:) => NULL(), bvxd_p1(:,:,:) => NULL(), bvyd_p1(:,:,:) => NULL(), bvzd_p1(:,:,:) => NULL()
+  real(8), pointer, save :: axx_p1(:,:,:) => NULL(), axy_p1(:,:,:) => NULL(), axz_p1(:,:,:) => NULL(), ayy_p1(:,:,:) => NULL(), ayz_p1(:,:,:) => NULL(), azz_p1(:,:,:) => NULL()
+
+  real(8), pointer, save :: rg_p2(:) => NULL(), rgex_p2(:) => NULL(), thgex_p2(:) => NULL(), phigex_p2(:) => NULL()
+  integer, pointer, save :: irgex_r_p2(:) => NULL(), itgex_th_p2(:) => NULL(), ipgex_phi_p2(:) => NULL()
+  integer, pointer, save :: itgex_r_p2(:,:) => NULL(), ipgex_r_p2(:,:) => NULL(), ipgex_th_p2(:,:) => NULL()
+  real(8), pointer, save :: emd_p2(:,:,:) => NULL(), rs_p2(:,:) => NULL()
+  real(8), pointer, save :: psif_p2(:,:,:) => NULL(), alphf_p2(:,:,:) => NULL(), bvxdf_p2(:,:,:) => NULL(), bvydf_p2(:,:,:) => NULL(), bvzdf_p2(:,:,:) => NULL()
+  real(8), pointer, save :: psi_p2(:,:,:) => NULL(), alph_p2(:,:,:) => NULL(), bvxd_p2(:,:,:) => NULL(), bvyd_p2(:,:,:) => NULL(), bvzd_p2(:,:,:) => NULL()
+  real(8), pointer, save :: axx_p2(:,:,:) => NULL(), axy_p2(:,:,:) => NULL(), axz_p2(:,:,:) => NULL(), ayy_p2(:,:,:) => NULL(), ayz_p2(:,:,:) => NULL(), azz_p2(:,:,:) => NULL()
+
+  real(8), pointer, save :: rg_p3(:) => NULL(), rgex_p3(:) => NULL(), thgex_p3(:) => NULL(), phigex_p3(:) => NULL()
+  integer, pointer, save :: irgex_r_p3(:) => NULL(), itgex_th_p3(:) => NULL(), ipgex_phi_p3(:) => NULL()
+  integer, pointer, save :: itgex_r_p3(:,:) => NULL(), ipgex_r_p3(:,:) => NULL(), ipgex_th_p3(:,:) => NULL()
+  real(8), pointer, save :: psi_p3(:,:,:) => NULL(), alph_p3(:,:,:) => NULL(), bvxd_p3(:,:,:) => NULL(), bvyd_p3(:,:,:) => NULL(), bvzd_p3(:,:,:) => NULL()
+  real(8), pointer, save :: axx_p3(:,:,:) => NULL(), axy_p3(:,:,:) => NULL(), axz_p3(:,:,:) => NULL(), ayy_p3(:,:,:) => NULL(), ayz_p3(:,:,:) => NULL(), azz_p3(:,:,:) => NULL()
+
+  real(8), pointer, save :: wxspf_p1(:,:,:) => NULL(), wyspf_p1(:,:,:) => NULL(), wzspf_p1(:,:,:) => NULL()
+  real(8), pointer, save :: wxspf_p2(:,:,:) => NULL(), wyspf_p2(:,:,:) => NULL(), wzspf_p2(:,:,:) => NULL()
+  real(8), pointer, save :: vep_p1(:,:,:) => NULL(), vepxf_p1(:,:,:) => NULL(), vepyf_p1(:,:,:) => NULL(), vepzf_p1(:,:,:) => NULL()
+  real(8), pointer, save :: vep_p2(:,:,:) => NULL(), vepxf_p2(:,:,:) => NULL(), vepyf_p2(:,:,:) => NULL(), vepzf_p2(:,:,:) => NULL()
+
+  logical, save :: have_read_data = .false.
+end module COCAL_ID_data_bns
+
+
+
+subroutine COCAL_ID_read_rns_data(CCTK_ARGUMENTS)
+
 use COCAL_ID_grid_parameter, eps_cocal => eps
-use COCAL_ID_interface_modules_cartesian
 use COCAL_ID_coordinate_grav_r
 use COCAL_ID_coordinate_grav_phi
 use COCAL_ID_coordinate_grav_theta
@@ -154,101 +218,23 @@ use COCAL_ID_interface_IO_input_CF_star_export
 use COCAL_ID_interface_invhij_WL_export
 use COCAL_ID_interface_index_vec_down2up_export
 use COCAL_ID_interface_interpo_gr2fl_metric_CF_export
-
-use COCAL_ID_interface_IO_input_matter_BHT_export ! Unique to BHT 
-
-
-use COCAL_ID_interface_IO_input_grav_export_Ai            ! only used in MRNS_WL
-use COCAL_ID_interface_IO_input_grav_export_Faraday       !
-use COCAL_ID_interface_IO_input_star4ve_export            !  
+use COCAL_ID_interface_IO_input_matter_BHT_export
+use COCAL_ID_interface_IO_input_grav_export_Ai
+use COCAL_ID_interface_IO_input_grav_export_Faraday
+use COCAL_ID_interface_IO_input_star4ve_export
+use COCAL_ID_data_rns
 
 implicit none
   DECLARE_CCTK_ARGUMENTS
   DECLARE_CCTK_FUNCTIONS
   DECLARE_CCTK_PARAMETERS
-  integer :: iAB 
-  
+
   character*400 :: COCAL_ID_PathToIDf, outstr, COCAL_ID_readformatf
-  
-  integer :: COCAL_ID_PathToIDf_len,COCAL_ID_readformatlen 
-  integer :: i, j, k, nx, ny, nz
+  integer :: COCAL_ID_PathToIDf_len, COCAL_ID_readformatlen
 
-  logical :: bool_hydro, bool_lapse, bool_shift, bool_Bvec
-  
-  real(8) :: xcac, ycac, zcac ! Cactus coordinates
-  real(8) :: xcoc, ycoc, zcoc, rcoc ! COCAL coordinates
-  real(8) :: emdca,  omefca, psica,  alphca, psi4ca, psif4ca
-  real(8) :: bvxdca, bvydca, bvzdca, bvxuca, bvyuca, bvzuca
-  real(8) :: hxxdca, hxydca, hxzdca, hyydca, hyzdca, hzzdca
-  real(8) :: hxxuca, hxyuca, hxzuca, hyyuca, hyzuca, hzzuca
-  real(8) :: hca, preca, rhoca, eneca, epsca
-  real(8) :: kxxca, kxyca, kxzca, kyyca, kyzca, kzzca
-  real(8) :: vxu, vyu, vzu
-  real(8) :: bxcor, bycor, bzcor, bvxufca, bvyufca, bvzufca, psifca, alphfca
-  real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1, kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
-  real(8) :: ome, ber, radi, rexc
-
-  real(8) :: va1, vaxd1, vayd1, vazd1, fxd1, fyd1, fzd1, fxyd1, fxzd1, fyzd1
-  real(8) :: vaca, vaxdca, vaydca, vazdca, fxdca, fydca, fzdca, fxydca, fxzdca, fyzdca
-  real(8) :: utfca, uxfca, uyfca, uzfca ! Fluid 4 vel
-  real(8), pointer :: utf(:,:,:)  ,  uxf(:,:,:) ,  uyf(:,:,:) ,  uzf(:,:,:)
-!
-  real(8), pointer :: emd(:,:,:), omef(:,:,:), rs(:,:)
-  real(8), pointer :: psif(:,:,:), alphf(:,:,:), bvxuf(:,:,:), bvyuf(:,:,:), bvzuf(:,:,:)
-  real(8), pointer :: psi(:,:,:)  , alph(:,:,:)
-  real(8), pointer :: bvxd(:,:,:) , bvyd(:,:,:) , bvzd(:,:,:) , bvxu(:,:,:) , bvyu(:,:,:), bvzu(:,:,:)
-  real(8), pointer :: hxxd(:,:,:) , hxyd(:,:,:) , hxzd(:,:,:) , hyyd(:,:,:) , hyzd(:,:,:), hzzd(:,:,:)
-  real(8), pointer :: hxxu(:,:,:) , hxyu(:,:,:) , hxzu(:,:,:) , hyyu(:,:,:) , hyzu(:,:,:), hzzu(:,:,:)
-  real(8), pointer :: kxxa(:,:,:)  , kxya(:,:,:)  , kxza(:,:,:)  , kyya(:,:,:)  , kyza(:,:,:) , kzza(:,:,:)
-
-  real(8), pointer ::  va(:,:,:)  , vaxd(:,:,:) , vayd(:,:,:) , vazd(:,:,:)                           ! (phi,A)
-  real(8), pointer :: fxd(:,:,:)  ,  fyd(:,:,:) ,  fzd(:,:,:) , fxyd(:,:,:) , fxzd(:,:,:), fyzd(:,:,:) ! Faraday tensor
-  if (COCAL_ID_verbose == 1) then 
-     call CCTK_INFO("Matrices and pointers declared")
-     call CCTK_INFO("Executing main COCAL_ID RNS reader...")
-  end if
-!
-  gxx1=0.0d0; gxy1=0.0d0; gxz1=0.0d0; gyy1=0.0d0; gyz1=0.0d0; gzz1=0.0d0
-  kxx1=0.0d0; kxy1=0.0d0; kxz1=0.0d0; kyy1=0.0d0; kyz1=0.0d0; kzz1=0.0d0
-  kxxca=0.0d0; kxyca=0.0d0; kxzca=0.0d0; kyyca=0.0d0; kyzca=0.0d0; kzzca=0.0d0
-
-  vaca=0.0d0;  vaxdca=0.0d0;  vaydca=0.0d0;  vazdca=0.0d0;                              ! (phi,A)
-  fxdca=0.0d0; fydca=0.0d0; fzdca=0.0d0; fxydca=0.0d0; fxzdca=0.0d0; fyzdca=0.0d0;     ! Faraday Tensor
-  fxd1=0.0d0;  fyd1=0.0d0;  fzd1=0.0d0;  fxyd1=0.0d0;  fxzd1=0.0d0; fyzd1=0.0d0;          !
-  va1=0.0d0;  vaxd1=0.0d0; vayd1=0.0d0; vazd1=0.0d0;                                      !(phi,A) (Aphi, Avec[3]) & (Bvec[3])
-  utfca=0.0d0;  uxfca=0.0d0;  uyfca=0.0d0;  uzfca=0.0d0;                                  ! Fluid 4 vel (vel[3])
-
-  nx = cctk_lsh(1)
-  ny = cctk_lsh(2)
-  nz = cctk_lsh(3)
-
-  if (CCTK_EQUALS(initial_hydro, "Cocal")) then
-    bool_hydro = .true.
-  else
-    bool_hydro = .false.
-  end if
-  if (CCTK_EQUALS(initial_lapse, "Cocal")) then
-     bool_lapse = .true.
-  else
-     bool_lapse = .false.
-  end if
-  if (CCTK_EQUALS(initial_shift, "Cocal")) then
-     bool_shift = .true.
-  else
-     bool_shift = .false.
-  end if
-  if (CCTK_EQUALS(initial_Bvec, "Cocal")) then
-     bool_Bvec = .true.
-  else
-     bool_Bvec = .false.
-  end if
-
-  if (COCAL_ID_verbose == 1) then
-    call CCTK_INFO("Setting Hydro: " // trim(merge("true ", "false", bool_hydro)))
-    call CCTK_INFO("Setting Lapse: " // trim(merge("true ", "false", bool_lapse)))
-    call CCTK_INFO("Setting Shift: " // trim(merge("true ", "false", bool_shift)))
-    call CCTK_INFO("Setting Bvec: "  // trim(merge("true ", "false", bool_Bvec)))
-  end if
+  !$OMP critical(COCAL_ID_rns_read)
+  if (.not. have_read_data) then
+     if (COCAL_ID_verbose == 1) call CCTK_INFO("Reading COCAL RNS data once for this MPI rank...")
   call CCTK_FortranString(COCAL_ID_PathToIDf_len,COCAL_ID_PathToID,COCAL_ID_PathToIDf)  
 
   if (COCAL_ID_verbose == 1) call CCTK_INFO("Executing Reader: ")
@@ -406,6 +392,222 @@ implicit none
      write(outstr,'(A,3e20.12)') "Constants: omega, bernoulli, radii: ", ome, ber, radi
      call CCTK_INFO(trim(outstr))
   end if
+
+
+     have_read_data = .true.
+     if (COCAL_ID_verbose == 1) call CCTK_INFO("Done reading COCAL RNS data for this MPI rank.")
+  end if
+  !$OMP END CRITICAL(COCAL_ID_rns_read)
+
+end subroutine COCAL_ID_read_rns_data
+
+subroutine COCAL_ID_deallocate_rns(CCTK_ARGUMENTS)
+
+  use COCAL_ID_data_rns
+
+  implicit none
+  DECLARE_CCTK_ARGUMENTS
+  DECLARE_CCTK_FUNCTIONS
+  DECLARE_CCTK_PARAMETERS
+
+  if (.not. have_read_data) then
+     if (COCAL_ID_verbose == 1) call CCTK_INFO("No RNS data read, skipping deallocation...")
+     return
+  end if
+
+  if (COCAL_ID_verbose == 1) call CCTK_INFO("Deallocating COCAL RNS data...")
+
+  deallocate(emd, omef, psif, alphf)
+  deallocate(bvxuf, bvyuf, bvzuf, rs)
+  deallocate(psi, alph, bvxd, bvyd)
+  deallocate(bvzd, bvxu, bvyu, bvzu)
+  deallocate(hxxd, hxyd, hxzd, hyyd)
+  deallocate(hyzd, hzzd, hxxu, hxyu)
+  deallocate(hxzu, hyyu, hyzu, hzzu)
+  deallocate(kxxa, kxya, kxza, kyya)
+  deallocate(kyza, kzza)
+
+  if (CCTK_EQUALS(COCAL_ID_rnstype, "MRNS_WL")) then
+     deallocate(utf, uxf, uyf, uzf)
+     if (COCAL_ID_readpot == 1) then
+        deallocate(va, vaxd, vayd, vazd)
+     else if (COCAL_ID_readpot == 0) then
+        deallocate(fxd, fyd, fzd)
+        deallocate(fxyd, fxzd, fyzd)
+     end if
+  end if
+
+  have_read_data = .false.
+  if (COCAL_ID_verbose == 1) call CCTK_INFO("Done deallocating COCAL RNS data.")
+
+end subroutine COCAL_ID_deallocate_rns
+
+subroutine COCAL_ID_deallocate_bns(CCTK_ARGUMENTS)
+
+  use COCAL_ID_data_bns
+
+  implicit none
+  DECLARE_CCTK_ARGUMENTS
+  DECLARE_CCTK_FUNCTIONS
+  DECLARE_CCTK_PARAMETERS
+
+  if (.not. have_read_data) then
+     if (COCAL_ID_verbose == 1) call CCTK_INFO("No BNS data read, skipping deallocation...")
+     return
+  end if
+
+  if (COCAL_ID_verbose == 1) call CCTK_INFO("Deallocating COCAL BNS data...")
+
+  deallocate(rg_p1);  deallocate(rg_p2);  deallocate(rg_p3)
+  deallocate(rgex_p1);  deallocate(rgex_p2);  deallocate(rgex_p3)
+  deallocate(thgex_p1);  deallocate(thgex_p2);  deallocate(thgex_p3)
+  deallocate(phigex_p1);  deallocate(phigex_p2);  deallocate(phigex_p3)
+  deallocate(irgex_r_p1);  deallocate(irgex_r_p2);  deallocate(irgex_r_p3)
+  deallocate(itgex_th_p1);  deallocate(itgex_th_p2);  deallocate(itgex_th_p3)
+  deallocate(ipgex_phi_p1);  deallocate(ipgex_phi_p2);  deallocate(ipgex_phi_p3)
+  deallocate(itgex_r_p1);  deallocate(itgex_r_p2);  deallocate(itgex_r_p3)
+  deallocate(ipgex_r_p1);  deallocate(ipgex_r_p2);  deallocate(ipgex_r_p3)
+  deallocate(ipgex_th_p1);  deallocate(ipgex_th_p2);  deallocate(ipgex_th_p3)
+
+  deallocate(emd_p1);  deallocate(emd_p2)
+  select case (trim(id_type))
+     case ("IR","SP")
+        deallocate(vep_p1);    deallocate(vep_p2)
+        deallocate(vepxf_p1);  deallocate(vepxf_p2)
+        deallocate(vepyf_p1);  deallocate(vepyf_p2)
+        deallocate(vepzf_p1);  deallocate(vepzf_p2)
+        select case (trim(id_type))
+           case ("SP")
+              deallocate(wxspf_p1);  deallocate(wxspf_p2)
+              deallocate(wyspf_p1);  deallocate(wyspf_p2)
+              deallocate(wzspf_p1);  deallocate(wzspf_p2)
+        end select
+  end select
+  deallocate(psif_p1);  deallocate(psif_p2)
+  deallocate(alphf_p1);  deallocate(alphf_p2)
+  deallocate(bvxdf_p1);  deallocate(bvxdf_p2)
+  deallocate(bvydf_p1);  deallocate(bvydf_p2)
+  deallocate(bvzdf_p1);  deallocate(bvzdf_p2)
+  deallocate(rs_p1);  deallocate(rs_p2)
+  deallocate(psi_p1);  deallocate(psi_p2);  deallocate(psi_p3)
+  deallocate(alph_p1);  deallocate(alph_p2);  deallocate(alph_p3)
+  deallocate(bvxd_p1);  deallocate(bvxd_p2);  deallocate(bvxd_p3)
+  deallocate(bvyd_p1);  deallocate(bvyd_p2);  deallocate(bvyd_p3)
+  deallocate(bvzd_p1);  deallocate(bvzd_p2);  deallocate(bvzd_p3)
+  deallocate(axx_p1);  deallocate(axx_p2);  deallocate(axx_p3)
+  deallocate(axy_p1);  deallocate(axy_p2);  deallocate(axy_p3)
+  deallocate(axz_p1);  deallocate(axz_p2);  deallocate(axz_p3)
+  deallocate(ayy_p1);  deallocate(ayy_p2);  deallocate(ayy_p3)
+  deallocate(ayz_p1);  deallocate(ayz_p2);  deallocate(ayz_p3)
+  deallocate(azz_p1);  deallocate(azz_p2);  deallocate(azz_p3)
+
+  have_read_data = .false.
+  if (COCAL_ID_verbose == 1) call CCTK_INFO("Done deallocating COCAL BNS data.")
+
+end subroutine COCAL_ID_deallocate_bns
+
+!RNS Routine
+subroutine COCAL_ID_rns(CCTK_ARGUMENTS)
+
+use COCAL_ID_phys_constant
+use COCAL_ID_grid_parameter, eps_cocal => eps
+use COCAL_ID_interface_modules_cartesian
+use COCAL_ID_coordinate_grav_r
+use COCAL_ID_coordinate_grav_phi
+use COCAL_ID_coordinate_grav_theta
+use COCAL_ID_coordinate_grav_extended
+use COCAL_ID_trigonometry_grav_theta
+use COCAL_ID_trigonometry_grav_phi
+use COCAL_ID_interface_IO_input_CF_grav_export
+use COCAL_ID_interface_IO_input_WL_grav_export_hij
+use COCAL_ID_interface_IO_input_grav_export_Kij
+use COCAL_ID_interface_IO_input_CF_star_export
+use COCAL_ID_interface_invhij_WL_export
+use COCAL_ID_interface_index_vec_down2up_export
+use COCAL_ID_interface_interpo_gr2fl_metric_CF_export
+
+use COCAL_ID_interface_IO_input_matter_BHT_export ! Unique to BHT 
+
+
+use COCAL_ID_interface_IO_input_grav_export_Ai            ! only used in MRNS_WL
+use COCAL_ID_interface_IO_input_grav_export_Faraday       !
+use COCAL_ID_interface_IO_input_star4ve_export            !  
+use COCAL_ID_data_rns
+
+implicit none
+  DECLARE_CCTK_ARGUMENTS
+  DECLARE_CCTK_FUNCTIONS
+  DECLARE_CCTK_PARAMETERS
+  integer :: iAB 
+  
+  character*400 :: COCAL_ID_PathToIDf, outstr, COCAL_ID_readformatf
+  
+  integer :: COCAL_ID_PathToIDf_len,COCAL_ID_readformatlen 
+  integer :: i, j, k, nx, ny, nz
+
+  logical :: bool_hydro, bool_lapse, bool_shift, bool_Bvec
+  
+  real(8) :: xcac, ycac, zcac ! Cactus coordinates
+  real(8) :: xcoc, ycoc, zcoc, rcoc ! COCAL coordinates
+  real(8) :: emdca,  omefca, psica,  alphca, psi4ca, psif4ca
+  real(8) :: bvxdca, bvydca, bvzdca, bvxuca, bvyuca, bvzuca
+  real(8) :: hxxdca, hxydca, hxzdca, hyydca, hyzdca, hzzdca
+  real(8) :: hxxuca, hxyuca, hxzuca, hyyuca, hyzuca, hzzuca
+  real(8) :: hca, preca, rhoca, eneca, epsca
+  real(8) :: kxxca, kxyca, kxzca, kyyca, kyzca, kzzca
+  real(8) :: vxu, vyu, vzu
+  real(8) :: bxcor, bycor, bzcor, bvxufca, bvyufca, bvzufca, psifca, alphfca
+  real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1, kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
+  real(8) :: va1, vaxd1, vayd1, vazd1, fxd1, fyd1, fzd1, fxyd1, fxzd1, fyzd1
+  real(8) :: vaca, vaxdca, vaydca, vazdca, fxdca, fydca, fzdca, fxydca, fxzdca, fyzdca
+  real(8) :: utfca, uxfca, uyfca, uzfca ! Fluid 4 vel
+  if (COCAL_ID_verbose == 1) then 
+     call CCTK_INFO("Matrices and pointers declared")
+     call CCTK_INFO("Executing main COCAL_ID RNS reader...")
+  end if
+!
+  gxx1=0.0d0; gxy1=0.0d0; gxz1=0.0d0; gyy1=0.0d0; gyz1=0.0d0; gzz1=0.0d0
+  kxx1=0.0d0; kxy1=0.0d0; kxz1=0.0d0; kyy1=0.0d0; kyz1=0.0d0; kzz1=0.0d0
+  kxxca=0.0d0; kxyca=0.0d0; kxzca=0.0d0; kyyca=0.0d0; kyzca=0.0d0; kzzca=0.0d0
+
+  vaca=0.0d0;  vaxdca=0.0d0;  vaydca=0.0d0;  vazdca=0.0d0;                              ! (phi,A)
+  fxdca=0.0d0; fydca=0.0d0; fzdca=0.0d0; fxydca=0.0d0; fxzdca=0.0d0; fyzdca=0.0d0;     ! Faraday Tensor
+  fxd1=0.0d0;  fyd1=0.0d0;  fzd1=0.0d0;  fxyd1=0.0d0;  fxzd1=0.0d0; fyzd1=0.0d0;          !
+  va1=0.0d0;  vaxd1=0.0d0; vayd1=0.0d0; vazd1=0.0d0;                                      !(phi,A) (Aphi, Avec[3]) & (Bvec[3])
+  utfca=0.0d0;  uxfca=0.0d0;  uyfca=0.0d0;  uzfca=0.0d0;                                  ! Fluid 4 vel (vel[3])
+
+  nx = cctk_lsh(1)
+  ny = cctk_lsh(2)
+  nz = cctk_lsh(3)
+
+  if (CCTK_EQUALS(initial_hydro, "Cocal")) then
+    bool_hydro = .true.
+  else
+    bool_hydro = .false.
+  end if
+  if (CCTK_EQUALS(initial_lapse, "Cocal")) then
+     bool_lapse = .true.
+  else
+     bool_lapse = .false.
+  end if
+  if (CCTK_EQUALS(initial_shift, "Cocal")) then
+     bool_shift = .true.
+  else
+     bool_shift = .false.
+  end if
+  if (CCTK_EQUALS(initial_Bvec, "Cocal")) then
+     bool_Bvec = .true.
+  else
+     bool_Bvec = .false.
+  end if
+
+  if (COCAL_ID_verbose == 1) then
+    call CCTK_INFO("Setting Hydro: " // trim(merge("true ", "false", bool_hydro)))
+    call CCTK_INFO("Setting Lapse: " // trim(merge("true ", "false", bool_lapse)))
+    call CCTK_INFO("Setting Shift: " // trim(merge("true ", "false", bool_shift)))
+    call CCTK_INFO("Setting Bvec: "  // trim(merge("true ", "false", bool_Bvec)))
+  end if
+  if (.not. have_read_data) call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID_rns called before COCAL_ID_read_rns_data completed.")
 
   if (COCAL_ID_verbose == 1) call CCTK_INFO("Cocal: Looping over local cartesian grid:")
 
@@ -637,28 +839,6 @@ implicit none
          
   if (COCAL_ID_verbose == 1) call CCTK_INFO("3D Loop 100% Done")
 
-  if (COCAL_ID_verbose == 1) call CCTK_INFO("Deallocating....")
-  deallocate(  emd);  deallocate( omef);  deallocate( psif);  deallocate(alphf);
-  deallocate(bvxuf);  deallocate(bvyuf);  deallocate(bvzuf);  deallocate(   rs);
-  deallocate(  psi);  deallocate( alph);  deallocate( bvxd);  deallocate( bvyd);
-  deallocate( bvzd);  deallocate( bvxu);  deallocate( bvyu);  deallocate( bvzu);
-  deallocate( hxxd);  deallocate( hxyd);  deallocate( hxzd);  deallocate( hyyd);
-  deallocate( hyzd);  deallocate( hzzd);  deallocate( hxxu);  deallocate( hxyu);
-  deallocate( hxzu);  deallocate( hyyu);  deallocate( hyzu);  deallocate( hzzu);
-  deallocate(  kxxa);  deallocate(  kxya);  deallocate(  kxza);  deallocate(  kyya);
-  deallocate(  kyza);  deallocate(  kzza);
-
-  if (CCTK_EQUALS(COCAL_ID_rnstype, "MRNS_WL")) then
-     deallocate(  utf);  deallocate(  uxf);  deallocate(  uyf);  deallocate(  uzf);!
-     if (COCAL_ID_readpot == 1) then
-        deallocate(   va);  deallocate( vaxd);  deallocate( vayd);  deallocate( vazd);
-     else if (COCAL_ID_readpot == 0 ) then
-        deallocate(  fxd);  deallocate(  fyd);  deallocate(  fzd);
-        deallocate( fxyd);  deallocate( fxzd);  deallocate( fyzd);
-     end if
-  end if
-  !
-  if (COCAL_ID_verbose == 1) call CCTK_INFO("COCAL: Done Deallocating...")
 
   if (COCAL_ID_verbose == 1) call CCTK_INFO("COCAL: finishing...")
 END subroutine COCAL_ID_rns
@@ -670,137 +850,41 @@ END subroutine COCAL_ID_rns
  !
  !      MASTER CF BNS COCAL ID READER to CACTUS
  !______________________________________________
-SUBROUTINE COCAL_ID_bns(CCTK_ARGUMENTS)
- !
- 
+subroutine COCAL_ID_read_bns_data(CCTK_ARGUMENTS)
+
 use COCAL_ID_grid_parameter_binary_excision 
 use COCAL_ID_phys_constant 
 use COCAL_ID_grid_parameter, eps_cocal => eps 
 use COCAL_ID_coordinate_grav_r 
 use COCAL_ID_coordinate_grav_extended 
 use COCAL_ID_interface_modules_cartesian
- 
 use COCAL_ID_trigonometry_grav_phi 
 use COCAL_ID_def_binary_parameter, only : dis 
 use COCAL_ID_def_matter_parameter_mpt 
-use COCAL_ID_interface_interpo_lag4th_2Dsurf 
 use COCAL_ID_interface_IO_input_CF_grav_export 
-use COCAL_ID_interface_IO_input_CF_flir_export !IR 
-use COCAL_ID_interface_IO_input_CF_flco_export !CO 
-use COCAL_ID_interface_IO_input_CF_flsp_export !SP 
+use COCAL_ID_interface_IO_input_CF_flir_export
+use COCAL_ID_interface_IO_input_CF_flco_export
+use COCAL_ID_interface_IO_input_CF_flsp_export
 use COCAL_ID_interface_IO_input_CF_surf_export
- 
 use COCAL_ID_interface_IO_input_grav_export_Kij 
 use COCAL_ID_interface_interpo_gr2fl_metric_CF_export 
-use COCAL_ID_interface_IO_input_gradvep_export !unique to IR/SP   
-   
-   
+use COCAL_ID_interface_IO_input_gradvep_export
+use COCAL_ID_data_bns
 
- 
 implicit none
    DECLARE_CCTK_ARGUMENTS
    DECLARE_CCTK_FUNCTIONS
    DECLARE_CCTK_PARAMETERS
-   integer :: i, j, k, nx, ny, nz
-   integer :: impt, impt_ex, ico, irr, isp, igrid
 
-   logical ::  bool_lapse, bool_shift, bool_hydro, bool_Bvec
-   
-    
-   real(8) :: huta, alphfca2  !unique to IR, SP has this + more
-   real(8) :: vepxfca, vepyfca, vepzfca      !Unique to IR/SP
-   
-   real(8) :: confpow, psifcacp, wxspfca, wyspfca, wzspfca, wdvep, w2, wterm,confpow_p1, confpow_p2 !unique to SP
-   real(8), pointer :: wxspf_p1(:,:,:), wyspf_p1(:,:,:), wzspf_p1(:,:,:) !unique to SP
-   real(8), pointer :: wxspf_p2(:,:,:), wyspf_p2(:,:,:), wzspf_p2(:,:,:) !unique to SP
-   real(long) ::  fr4wxspf(4) , ft4wxspf(4) , fp4wxspf(4) !Unique to SP
-   real(long) ::  fr4wyspf(4) , ft4wyspf(4) , fp4wyspf(4) !Unique to SP
-   real(long) ::  fr4wzspf(4) , ft4wzspf(4) , fp4wzspf(4) !Unique to SP
-
-   real(long) ::  fr4vepxf(4) , ft4vepxf(4) , fp4vepxf(4) !unique to IR/SP
-   real(long) ::  fr4vepyf(4) , ft4vepyf(4) , fp4vepyf(4)
-   real(long) ::  fr4vepzf(4) , ft4vepzf(4) , fp4vepzf(4)
-
-   real(8), pointer :: vep_p1(:,:,:)                !unique to IR/SP
-   real(8), pointer :: vepxf_p1(:,:,:), vepyf_p1(:,:,:), vepzf_p1(:,:,:) !unique to IR/SP, SP has more
-   real(8), pointer :: vep_p2(:,:,:)                 !unique to IR/SP
-   real(8), pointer :: vepxf_p2(:,:,:), vepyf_p2(:,:,:), vepzf_p2(:,:,:) !unique to IR/SP
-   
-   character(30) :: char1
+   integer :: impt, igrid
    character(400) :: outstr
-   character*400 :: COCAL_ID_PathToIDf, COCAL_ID_readformatf
-   integer        :: COCAL_ID_PathToIDf_len, iAB, COCAL_ID_bnstypelen, COCAL_ID_readformatlen
-   character(2)   :: id_type
-   integer        :: ierr=0
-   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
-   real(8) :: rr3, rrcm, xc,yc,zc, xc_p1, yc_p1, zc_p1, xc_p2, yc_p2, zc_p2, dis_cm
-   real(8) :: xc_p3, yc_p3, zc_p3
-   real(8) :: xcac, ycac, zcac
-   real(8) :: xcoc, ycoc, zcoc
-   real(8) :: emdca, vepca, psica, alphca, bvxdca, bvydca, bvzdca, psi4ca, psif4ca
-   real(8) :: hca, preca, rhoca, eneca, epsca
-   real(8) :: vxu, vyu, vzu, lam_p1, lam_p2 
-   real(8) :: bxcor, bycor, bzcor, bvxdfca, bvydfca, bvzdfca, psifca, alphfca
-   real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1, kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
+   real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1
+   real(8) :: kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
    real(8) :: axx, axy, axz, ayy, ayz, azz
-   real(8) :: ome_p1, ber_p1, radi_p1, r_surf_p1
-   real(8) :: ome_p2, ber_p2, radi_p2, r_surf_p2
-   integer :: nrg_p1,  ntg_p1, npg_p1, nrf_p1, ntf_p1, npf_p1
-   integer :: nrg_p2,  ntg_p2, npg_p2, nrf_p2, ntf_p2, npf_p2
-   integer :: nrg_p3,  ntg_p3, npg_p3, nrf_p3, ntf_p3, npf_p3
- !
-   real(long) ::  rc_p1, thc_p1, phic_p1, varpic_p1, rcf_p1, rsca_p1
-   real(long) ::  rc_p2, thc_p2, phic_p2, varpic_p2, rcf_p2, rsca_p2
-   real(long) ::  rc_p3, thc_p3, phic_p3, varpic_p3
-   real(long) ::  r4(4), th4(4), phi4(4), fr4(4), ft4(4), fp4(4)
-   real(long) ::  fr4psi(4)   , ft4psi(4)   , fp4psi(4)
-   real(long) ::  fr4alph(4)  , ft4alph(4)  , fp4alph(4)
-   real(long) ::  fr4bvxd(4)  , ft4bvxd(4)  , fp4bvxd(4)
-   real(long) ::  fr4bvyd(4)  , ft4bvyd(4)  , fp4bvyd(4)
-   real(long) ::  fr4bvzd(4)  , ft4bvzd(4)  , fp4bvzd(4)
-   real(long) ::  fr4axx(4)   , ft4axx(4)   , fp4axx(4)
-   real(long) ::  fr4axy(4)   , ft4axy(4)   , fp4axy(4)
-   real(long) ::  fr4axz(4)   , ft4axz(4)   , fp4axz(4)
-   real(long) ::  fr4ayy(4)   , ft4ayy(4)   , fp4ayy(4)
-   real(long) ::  fr4ayz(4)   , ft4ayz(4)   , fp4ayz(4)
-   real(long) ::  fr4azz(4)   , ft4azz(4)   , fp4azz(4)
-   real(long) ::  fr4emd(4)   , ft4emd(4)   , fp4emd(4)
- 
-   real(long) ::  fr4psif(4)  , ft4psif(4)  , fp4psif(4)
-   real(long) ::  fr4alphf(4) , ft4alphf(4) , fp4alphf(4)
-   real(long) ::  fr4bvxdf(4) , ft4bvxdf(4) , fp4bvxdf(4)
-   real(long) ::  fr4bvydf(4) , ft4bvydf(4) , fp4bvydf(4)
-   real(long) ::  fr4bvzdf(4) , ft4bvzdf(4) , fp4bvzdf(4)
- !
-   integer :: irg, itg, ipg, irgex, itgex, ipgex
-   integer :: ir0, it0, ip0, irg0 , itg0 , ipg0, ii, jj, kk
-   real(long), external :: COCAL_ID_lagint_4th
- !
-   real(8), pointer :: rg_p1(:), rgex_p1(:), thgex_p1(:), phigex_p1(:)
-   integer, pointer :: irgex_r_p1(:), itgex_th_p1(:), ipgex_phi_p1(:)
-   integer, pointer :: itgex_r_p1(:,:), ipgex_r_p1(:,:), ipgex_th_p1(:,:)
-   real(8), pointer :: emd_p1(:,:,:), rs_p1(:,:)
-   real(8), pointer :: psif_p1(:,:,:), alphf_p1(:,:,:), bvxdf_p1(:,:,:), bvydf_p1(:,:,:), bvzdf_p1(:,:,:)
-   real(8), pointer :: psi_p1(:,:,:), alph_p1(:,:,:), bvxd_p1(:,:,:), bvyd_p1(:,:,:), bvzd_p1(:,:,:)
-   real(8), pointer :: axx_p1(:,:,:), axy_p1(:,:,:) , axz_p1(:,:,:) , ayy_p1(:,:,:) , ayz_p1(:,:,:), azz_p1(:,:,:)
- !
-   real(8), pointer :: rg_p2(:), rgex_p2(:), thgex_p2(:), phigex_p2(:)
-   integer, pointer :: irgex_r_p2(:), itgex_th_p2(:), ipgex_phi_p2(:)
-   integer, pointer :: itgex_r_p2(:,:), ipgex_r_p2(:,:), ipgex_th_p2(:,:)
-   real(8), pointer :: emd_p2(:,:,:), rs_p2(:,:)
-   real(8), pointer :: psif_p2(:,:,:), alphf_p2(:,:,:), bvxdf_p2(:,:,:), bvydf_p2(:,:,:), bvzdf_p2(:,:,:)
-   real(8), pointer :: psi_p2(:,:,:), alph_p2(:,:,:), bvxd_p2(:,:,:), bvyd_p2(:,:,:), bvzd_p2(:,:,:)
-   real(8), pointer :: axx_p2(:,:,:), axy_p2(:,:,:) , axz_p2(:,:,:) , ayy_p2(:,:,:) , ayz_p2(:,:,:), azz_p2(:,:,:)
- !
-   real(8), pointer :: rg_p3(:), rgex_p3(:), thgex_p3(:), phigex_p3(:)
-   integer, pointer :: irgex_r_p3(:), itgex_th_p3(:), ipgex_phi_p3(:)
-   integer, pointer :: itgex_r_p3(:,:), ipgex_r_p3(:,:), ipgex_th_p3(:,:)
-   real(8), pointer :: psi_p3(:,:,:), alph_p3(:,:,:), bvxd_p3(:,:,:), bvyd_p3(:,:,:), bvzd_p3(:,:,:)
-   real(8), pointer :: axx_p3(:,:,:), axy_p3(:,:,:) , axz_p3(:,:,:) , ayy_p3(:,:,:) , ayz_p3(:,:,:), azz_p3(:,:,:)
- !
-   
- 
- 
+
+   !$OMP critical(COCAL_ID_bns_read)
+   if (.not. have_read_data) then
+      if (COCAL_ID_verbose == 1) call CCTK_INFO("Reading COCAL BNS data once for this MPI rank...")
    call CCTK_FortranString(COCAL_ID_PathToIDf_len,COCAL_ID_PathToID,COCAL_ID_PathToIDf)  !For reading initial data
  ! -- Read ID type
    if (COCAL_ID_verbose == 1) call CCTK_INFO("COCAL_ID:: Reading BNS Type")
@@ -1154,6 +1238,127 @@ implicit none
    if (COCAL_ID_verbose == 1) call CCTK_INFO("Cocal: Internal reading info (END).")
    if (COCAL_ID_verbose == 1) call CCTK_INFO("Cocal: Looping over local cartesian grid:")
  
+
+      have_read_data = .true.
+      if (COCAL_ID_verbose == 1) call CCTK_INFO("Done reading COCAL BNS data for this MPI rank.")
+   end if
+   !$OMP END CRITICAL(COCAL_ID_bns_read)
+
+contains
+   integer function read_id_type(filename,id_type)
+
+implicit none
+     integer :: nrg, nrf, nrf_deform, nrgin
+     character(len=*) :: filename
+     character(2) :: id_type, EQ_point
+
+     open(unit = 1,file = trim(filename), status='old')
+     read(1,'(4i5)') nrg
+     read(1,'(4i5)') nrf
+     read(1,'(2i5,2(3x,a2))') nrf_deform, nrgin, id_type, EQ_point
+     close(1)
+     read_id_type = 0
+
+end function read_id_type
+end subroutine COCAL_ID_read_bns_data
+
+SUBROUTINE COCAL_ID_bns(CCTK_ARGUMENTS)
+ !
+ 
+use COCAL_ID_grid_parameter_binary_excision 
+use COCAL_ID_phys_constant 
+use COCAL_ID_grid_parameter, eps_cocal => eps 
+use COCAL_ID_coordinate_grav_r 
+use COCAL_ID_coordinate_grav_extended 
+use COCAL_ID_interface_modules_cartesian
+ 
+use COCAL_ID_trigonometry_grav_phi 
+use COCAL_ID_def_binary_parameter, only : dis 
+use COCAL_ID_def_matter_parameter_mpt 
+use COCAL_ID_interface_interpo_lag4th_2Dsurf 
+use COCAL_ID_interface_IO_input_CF_grav_export 
+use COCAL_ID_interface_IO_input_CF_flir_export !IR 
+use COCAL_ID_interface_IO_input_CF_flco_export !CO 
+use COCAL_ID_interface_IO_input_CF_flsp_export !SP 
+use COCAL_ID_interface_IO_input_CF_surf_export
+ 
+use COCAL_ID_interface_IO_input_grav_export_Kij 
+use COCAL_ID_interface_interpo_gr2fl_metric_CF_export 
+use COCAL_ID_interface_IO_input_gradvep_export !unique to IR/SP   
+use COCAL_ID_data_bns
+   
+   
+
+ 
+implicit none
+   DECLARE_CCTK_ARGUMENTS
+   DECLARE_CCTK_FUNCTIONS
+   DECLARE_CCTK_PARAMETERS
+   integer :: i, j, k, nx, ny, nz
+   integer :: impt_ex, ico, irr, isp
+
+   logical ::  bool_lapse, bool_shift, bool_hydro, bool_Bvec
+
+   real(8) :: huta, alphfca2
+   real(8) :: vepxfca, vepyfca, vepzfca
+
+   real(8) :: confpow, psifcacp, wxspfca, wyspfca, wzspfca, wdvep, w2, wterm
+   real(long) ::  fr4wxspf(4) , ft4wxspf(4) , fp4wxspf(4)
+   real(long) ::  fr4wyspf(4) , ft4wyspf(4) , fp4wyspf(4)
+   real(long) ::  fr4wzspf(4) , ft4wzspf(4) , fp4wzspf(4)
+
+   real(long) ::  fr4vepxf(4) , ft4vepxf(4) , fp4vepxf(4)
+   real(long) ::  fr4vepyf(4) , ft4vepyf(4) , fp4vepyf(4)
+   real(long) ::  fr4vepzf(4) , ft4vepzf(4) , fp4vepzf(4)
+
+   character(30) :: char1
+   character(400) :: outstr
+   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
+   real(8) :: rrcm, xc,yc,zc, xc_p1, yc_p1, zc_p1, xc_p2, yc_p2, zc_p2
+   real(8) :: xc_p3, yc_p3, zc_p3
+   real(8) :: xcac, ycac, zcac
+   real(8) :: xcoc, ycoc, zcoc
+   real(8) :: emdca, vepca, psica, alphca, bvxdca, bvydca, bvzdca, psi4ca, psif4ca
+   real(8) :: hca, preca, rhoca, eneca, epsca
+   real(8) :: vxu, vyu, vzu, lam_p1, lam_p2
+   real(8) :: bxcor, bycor, bzcor, bvxdfca, bvydfca, bvzdfca, psifca, alphfca
+   real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1, kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
+   real(8) :: axx, axy, axz, ayy, ayz, azz
+   real(long) ::  rc_p1, thc_p1, phic_p1, varpic_p1, rcf_p1, rsca_p1
+   real(long) ::  rc_p2, thc_p2, phic_p2, varpic_p2, rcf_p2, rsca_p2
+   real(long) ::  rc_p3, thc_p3, phic_p3, varpic_p3
+   real(long) ::  r4(4), th4(4), phi4(4), fr4(4), ft4(4), fp4(4)
+   real(long) ::  fr4psi(4)   , ft4psi(4)   , fp4psi(4)
+   real(long) ::  fr4alph(4)  , ft4alph(4)  , fp4alph(4)
+   real(long) ::  fr4bvxd(4)  , ft4bvxd(4)  , fp4bvxd(4)
+   real(long) ::  fr4bvyd(4)  , ft4bvyd(4)  , fp4bvyd(4)
+   real(long) ::  fr4bvzd(4)  , ft4bvzd(4)  , fp4bvzd(4)
+   real(long) ::  fr4axx(4)   , ft4axx(4)   , fp4axx(4)
+   real(long) ::  fr4axy(4)   , ft4axy(4)   , fp4axy(4)
+   real(long) ::  fr4axz(4)   , ft4axz(4)   , fp4axz(4)
+   real(long) ::  fr4ayy(4)   , ft4ayy(4)   , fp4ayy(4)
+   real(long) ::  fr4ayz(4)   , ft4ayz(4)   , fp4ayz(4)
+   real(long) ::  fr4azz(4)   , ft4azz(4)   , fp4azz(4)
+   real(long) ::  fr4emd(4)   , ft4emd(4)   , fp4emd(4)
+ 
+   real(long) ::  fr4psif(4)  , ft4psif(4)  , fp4psif(4)
+   real(long) ::  fr4alphf(4) , ft4alphf(4) , fp4alphf(4)
+   real(long) ::  fr4bvxdf(4) , ft4bvxdf(4) , fp4bvxdf(4)
+   real(long) ::  fr4bvydf(4) , ft4bvydf(4) , fp4bvydf(4)
+   real(long) ::  fr4bvzdf(4) , ft4bvzdf(4) , fp4bvzdf(4)
+ !
+   integer :: irg, itg, ipg, irgex, itgex, ipgex
+   integer :: ir0, it0, ip0, irg0 , itg0 , ipg0, ii, jj, kk
+   real(long), external :: COCAL_ID_lagint_4th
+ !
+
+ 
+   if (.not. have_read_data) call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID_bns called before COCAL_ID_read_bns_data completed.")
+
+   gxx1=0.0d0; gxy1=0.0d0; gxz1=0.0d0; gyy1=0.0d0; gyz1=0.0d0; gzz1=0.0d0
+   kxx1=0.0d0; kxy1=0.0d0; kxz1=0.0d0; kyy1=0.0d0; kyz1=0.0d0; kzz1=0.0d0
+   axx=0.0d0; axy=0.0d0; axz=0.0d0; ayy=0.0d0; ayz=0.0d0; azz=0.0d0
+
    nx = cctk_lsh(1)
    ny = cctk_lsh(2)
    nz = cctk_lsh(3)
@@ -1922,67 +2127,7 @@ implicit none
  
 
  
-   if (COCAL_ID_verbose == 1) call CCTK_INFO("Deallocating....")
-   deallocate(       rg_p1);  deallocate(       rg_p2);  deallocate(       rg_p3)
-   deallocate(     rgex_p1);  deallocate(     rgex_p2);  deallocate(     rgex_p3)
-   deallocate(    thgex_p1);  deallocate(    thgex_p2);  deallocate(    thgex_p3)
-   deallocate(   phigex_p1);  deallocate(   phigex_p2);  deallocate(   phigex_p3)
-   deallocate(  irgex_r_p1);  deallocate(  irgex_r_p2);  deallocate(  irgex_r_p3)
-   deallocate( itgex_th_p1);  deallocate( itgex_th_p2);  deallocate( itgex_th_p3)
-   deallocate(ipgex_phi_p1);  deallocate(ipgex_phi_p2);  deallocate(ipgex_phi_p3)
-   deallocate(  itgex_r_p1);  deallocate(  itgex_r_p2);  deallocate(  itgex_r_p3)
-   deallocate(  ipgex_r_p1);  deallocate(  ipgex_r_p2);  deallocate(  ipgex_r_p3)
-   deallocate( ipgex_th_p1);  deallocate( ipgex_th_p2);  deallocate( ipgex_th_p3)
-   
-   deallocate(  emd_p1);  deallocate(  emd_p2);
-   select case (trim(id_type))
-      case ("IR","SP")
-         deallocate(vep_p1);    deallocate(vep_p2);
-         deallocate(vepxf_p1);  deallocate(vepxf_p2); 
-         deallocate(vepyf_p1);  deallocate(vepyf_p2); 
-         deallocate(vepzf_p1);  deallocate(vepzf_p2); 
-         select case (trim(id_type))
-            case ("SP")
-               deallocate(wxspf_p1);  deallocate(wxspf_p2); 
-               deallocate(wyspf_p1);  deallocate(wyspf_p2); 
-               deallocate(wzspf_p1);  deallocate(wzspf_p2); 
-         end select
-   end select
-   deallocate( psif_p1);  deallocate( psif_p2);
-   deallocate(alphf_p1);  deallocate(alphf_p2);
-   deallocate(bvxdf_p1);  deallocate(bvxdf_p2);
-   deallocate(bvydf_p1);  deallocate(bvydf_p2);
-   deallocate(bvzdf_p1);  deallocate(bvzdf_p2);
-   deallocate(   rs_p1);  deallocate(   rs_p2);
-   deallocate(  psi_p1);  deallocate(  psi_p2);  deallocate(psi_p3)
-   deallocate( alph_p1);  deallocate( alph_p2);  deallocate(alph_p3)
-   deallocate( bvxd_p1);  deallocate( bvxd_p2);  deallocate(bvxd_p3)
-   deallocate( bvyd_p1);  deallocate( bvyd_p2);  deallocate(bvyd_p3)
-   deallocate( bvzd_p1);  deallocate( bvzd_p2);  deallocate(bvzd_p3)
-   deallocate(  axx_p1);  deallocate(  axx_p2);  deallocate(axx_p3)
-   deallocate(  axy_p1);  deallocate(  axy_p2);  deallocate(axy_p3)
-   deallocate(  axz_p1);  deallocate(  axz_p2);  deallocate(axz_p3)
-   deallocate(  ayy_p1);  deallocate(  ayy_p2);  deallocate(ayy_p3)
-   deallocate(  ayz_p1);  deallocate(  ayz_p2);  deallocate(ayz_p3)
-   deallocate(  azz_p1);  deallocate(  azz_p2);  deallocate(azz_p3)
-   if (COCAL_ID_verbose == 1) call CCTK_INFO("Finished Deallocating...")
    if (COCAL_ID_verbose == 1) call CCTK_INFO("Finished coc2cac_bns master subroutine")
  !
  
-contains
-   integer function read_id_type(filename,id_type)
-   
-implicit none
-     integer :: nrg, nrf, nrf_deform, nrgin
-     character(len=*) :: filename
-     character(2) :: id_type, EQ_point
-   
-     open(unit = 1,file = trim(filename), status='old')
-     read(1,'(4i5)') nrg
-     read(1,'(4i5)') nrf
-     read(1,'(2i5,2(3x,a2))') nrf_deform, nrgin, id_type, EQ_point
-     close(1)
-     read_id_type = 0
- 
-end function read_id_type
  END SUBROUTINE COCAL_ID_bns

@@ -2,16 +2,40 @@
 
 if (CCTK_Equals(initial_data, "CocalRNS"))
 {
+   SCHEDULE COCAL_ID_read_rns_data IN HydroBase_Initial BEFORE COCAL_ID_rns
+   {
+      LANG: FORTRAN
+      OPTIONS: global
+   } "read COCAL RNS data once per MPI rank"
+
    SCHEDULE COCAL_ID_rns IN HydroBase_Initial
    {
       LANG: FORTRAN
-   }"Read Cocal RNS Initial Data into Cactus"
+   } "Interpolate Cocal RNS Initial Data into Cactus"
+
+   SCHEDULE COCAL_ID_deallocate_rns AT POSTPOSTINITIAL
+   {
+      LANG: FORTRAN
+      OPTIONS: global
+   } "deallocate all COCAL RNS data"
 }
 
 if (CCTK_Equals(initial_data, "CocalBNS"))
 {
+   SCHEDULE COCAL_ID_read_bns_data IN HydroBase_Initial BEFORE COCAL_ID_bns
+   {
+      LANG: FORTRAN
+      OPTIONS: global
+   } "read COCAL BNS data once per MPI rank"
+
    SCHEDULE COCAL_ID_bns IN HydroBase_Initial
    {
       LANG: FORTRAN
-   }"Read Cocal BNS Initial Data into Cactus"
+   } "Interpolate Cocal BNS Initial Data into Cactus"
+
+   SCHEDULE COCAL_ID_deallocate_bns AT POSTPOSTINITIAL
+   {
+      LANG: FORTRAN
+      OPTIONS: global
+   } "deallocate all COCAL BNS data"
 }
